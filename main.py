@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 import random
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
@@ -18,7 +17,7 @@ def lauri_fakta(update, context):
 
 def greet_new_member(update, context):
     for member in update.message.new_chat_members:
-        context.bot.send_message(chat_id=update.message.chat_id, text=f"Toivottakaa {member.first_name} tervetulleeksi LauriMafiaan! 🤝  \nJos haluat kuulla faktaa Laureista, kirjoita /laurifakta 👨‍🏫")
+        context.bot.send_message(chat_id=update.message.chat_id, text=f"Toivottakaa {member.first_name} tervetulleeksi LauriMafiaan!   \nJos haluat kuulla faktaa Laureista, kirjoita /laurifakta ")
 
 # Add new fact to facts.txt
 
@@ -49,7 +48,7 @@ def get_group_members(update, context):
 
 def welcome_message(update, context):
     """Sends a welcome message when the bot is added to a group chat."""
-    message = f"Laurimaista päivää kaikille! Minä olen {context.bot.name} ja olen saapunut jakamaan Laurien ilosanomaa! 🤝 \nJos haluat kuulla faktaa Laureista, kirjoita /laurifakta 👨‍🏫"
+    message = f"Laurimaista päivää kaikille! Minä olen {context.bot.name} ja olen saapunut jakamaan Laurien ilosanomaa!  \nJos haluat kuulla faktaa Laureista, kirjoita /laurifakta "
     context.bot.send_message(chat_id=update.effective_chat.id, text=message)
 
 welcome_handler = MessageHandler(Filters.status_update.new_chat_members, welcome_message)
