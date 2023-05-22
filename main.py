@@ -1,6 +1,7 @@
+
 # -*- coding: utf-8 -*-
+
 import random
-import datetime
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import config
 
@@ -18,32 +19,20 @@ def lauri_fakta(update, context):
 
 def greet_new_member(update, context):
     for member in update.message.new_chat_members:
-        welcome_message = f"Toivottakaa {member.first_name} tervetulleeksi LauriMafiaan! \U0001F91D\nJos haluat kuulla faktaa Laureista, kirjoita /laurifakta \U0001F468‍🏫"
-        context.bot.send_message(chat_id=update.message.chat_id, text=welcome_message)
+        context.bot.send_message(chat_id=update.message.chat_id, text=f"Toivottakaa {member.first_name} tervetulleeksi LauriMafiaan! 🤝  \nJos haluat kuulla faktaa Laureista, kirjoita /laurifakta 👨‍🏫")
 
 # Get member count
 
 def get_group_members(update, context):
     chat_id = update.message.chat_id
     member_count = context.bot.get_chat_members_count(chat_id)
-    count_message = f"Laurimafiassa on tällä hetkellä {member_count} Lauria! Hyvää työtä Laurit! \U0001F60E"
-    context.bot.send_message(chat_id=chat_id, text=count_message)
-
-# Send random text from randomText.txt
-
-def send_random_text(context):
-    with open('randomText.txt', 'r', encoding='utf-8') as f:
-        lines = f.readlines()
-
-    random_line = random.choice(lines).strip()
-
-    context.bot.send_message(chat_id=config.GROUP_CHAT_ID, text=random_line)
+    context.bot.send_message(chat_id=chat_id, text=f"Laurimafiassa on tällä hetkellä {member_count} Lauria! Hyvää työtä Laurit! 😎")
 
 # Message when bot joins group
 
 def welcome_message(update, context):
     """Sends a welcome message when the bot is added to a group chat."""
-    message = f"Laurimaista päivää kaikille! Minä olen {context.bot.name} ja olen saapunut jakamaan Laurien ilosanomaa! \U0001F91D\nJos haluat kuulla faktaa Laureista, kirjoita /laurifakta \U0001F468‍🏫"
+    message = f"Laurimaista päivää kaikille! Minä olen {context.bot.name} ja olen saapunut jakamaan Laurien ilosanomaa! 🤝 \nJos haluat kuulla faktaa Laureista, kirjoita /laurifakta 👨"
     context.bot.send_message(chat_id=update.effective_chat.id, text=message)
 
 welcome_handler = MessageHandler(Filters.status_update.new_chat_members, welcome_message)
@@ -60,9 +49,6 @@ updater.dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_mem
 
 # Handler for getting member count
 updater.dispatcher.add_handler(CommandHandler('laurit', get_group_members))
-
-# Handler for sending random text
-updater.job_queue.run_daily(send_random_text, time=datetime.time(hour=random.randint(0, 23), minute=random.randint(0, 59)), days=(0, 1, 2, 3, 4, 5, 6), context=config.GROUP_CHAT_ID, name='random_text')
 
 # Handler for bot joining the group
 updater.dispatcher.add_handler(welcome_handler)
