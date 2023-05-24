@@ -2,6 +2,21 @@ import random
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
 import config
 
+
+# Provide bot information and available commands
+def get_help(update, context):
+    help_message = """
+    Moi! Olen LauriBot 🤖 ja olen Laurimaisin Lauri jonka tulet elämäsi aikana tapaamaan...Tietämykseni Laureista on verraton ja olen aina valmis tapaamaan kaimojani! 😎
+
+    Tässä on käytettävissä olevat komennot:
+
+    /laurifakta - Satunnainen Lauri-fakta
+    /laurit - Näytä ryhmän jäsenten määrä
+    /uusifakta - Lisää uusi Lauri-fakta
+    /ohje - Näytä tämä ohje
+    """
+    context.bot.send_message(chat_id=update.message.chat_id, text=help_message)
+
 # Random line from facts.txt
 
 def lauri_fakta(update, context):
@@ -30,7 +45,7 @@ def add_fact_input(update, context):
     fact = update.message.text.strip()
 
     with open('facts.txt', 'a', encoding='utf-8') as f:
-        f.write(fact + '\n')
+        f.write(fact + ' 👨‍🏫' + '\n' )
 
     context.bot.send_message(chat_id=update.message.chat_id, text="Uusi fakta on lisätty!")
 
@@ -55,6 +70,9 @@ welcome_handler = MessageHandler(Filters.status_update.new_chat_members, welcome
 # Updater for telegram bot
 
 updater = Updater(token=config.API_KEY, use_context=True)
+
+# Handler for help command
+updater.dispatcher.add_handler(CommandHandler('ohje', get_help))
 
 # Handler for random fact
 updater.dispatcher.add_handler(CommandHandler('laurifakta', lauri_fakta))
