@@ -1,4 +1,5 @@
 import random
+import time
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
 import config
 
@@ -16,6 +17,41 @@ def get_help(update, context):
     /ohje - Näytä tämä ohje
     """
     context.bot.send_message(chat_id=update.message.chat_id, text=help_message)
+
+
+# Send a random line from randomText.txt
+def send_random_text(update, context):
+    with open('randomText.txt', 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+    random_line = random.choice(lines).strip()
+    context.bot.send_message(chat_id=update.message.chat_id, text=random_line)
+
+# Dictionary to keep track of last sent times and message count
+last_sent_info = {}
+
+# Send random text with frequency limitation
+def send_limited_random_text(update, context):
+    chat_id = update.message.chat_id
+
+    current_time = time.time()
+    if chat_id not in last_sent_info:
+        last_sent_info[chat_id] = {'times': [], 'count': 0}
+
+    # Remove timestamps older than 24 hours
+    last_sent_info[chat_id]['times'] = [t for t in last_sent_info[chat_id]['times'] if current_time - t <= 24 * 3600]
+
+    if last_sent_info[chat_id]['count'] < 3:
+        with open('randomText.txt', 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+
+        random_line = random.choice(lines).strip()
+        context.bot.send_message(chat_id=chat_id, text=random_line)
+
+        last_sent_info[chat_id]['times'].append(current_time)
+        last_sent_info[chat_id]['count'] += 1
+    else:
+        pass  # Do nothing if the limit is reached
 
 # Random line from facts.txt
 
@@ -55,7 +91,7 @@ def add_fact_input(update, context):
 
 def get_group_members(update, context):
     chat_id = update.message.chat_id
-    member_count = context.bot.get_chat_members_count(chat_id)
+    member_count = context.bot.get_chat_member_count(chat_id)
     context.bot.send_message(chat_id=chat_id, text=f"LauriMafiassa on tällä hetkellä {member_count} jäsentä! Hyvä Laurit!")
 
 # Message when bot joins group
@@ -73,6 +109,9 @@ updater = Updater(token=config.API_KEY, use_context=True)
 
 # Handler for help command
 updater.dispatcher.add_handler(CommandHandler('ohje', get_help))
+
+# Handler for sending random text
+updater.dispatcher.add_handler(CommandHandler('randomtext', send_random_text))
 
 # Handler for random fact
 updater.dispatcher.add_handler(CommandHandler('laurifakta', lauri_fakta))
